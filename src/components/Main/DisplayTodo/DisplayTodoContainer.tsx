@@ -12,7 +12,6 @@ const DisplayTodoContainer: React.FC<todoDBStateType> = ({
       <StyledTitleDiv>
         <h3>할 일 목록</h3>
       </StyledTitleDiv>
-
       <TodoList
         todoDB={todoDB}
         setTodoDB={setTodoDB}
@@ -24,7 +23,6 @@ const DisplayTodoContainer: React.FC<todoDBStateType> = ({
 export default DisplayTodoContainer;
 
 const StyledDiv = styled.div`
-  border: 0.1px salmon solid;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,5 +34,4 @@ const StyledTitleDiv = styled.div`
   justify-content: center;
   align-items: center;
   height: 30px;
-  border: 0.1px salmon solid;
 `;
