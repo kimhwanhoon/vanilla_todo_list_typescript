@@ -27,6 +27,7 @@ const StyledDiv = styled.div`
   border: 0.1px salmon solid;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
 `;
 
