@@ -1,16 +1,20 @@
 import React from 'react';
 import { styled } from 'styled-components';
 import TodoInput from './TodoInput';
+import { todoDBStateType } from '../../../types';
 
-interface setTodoType {
-  setTodoDB: (newValue: string[]) => void;
-}
-
-const InputContainer: React.FC<setTodoType> = ({ setTodoDB }): JSX.Element => {
+const InputContainer: React.FC<todoDBStateType> = ({
+  todoDB,
+  setTodoDB,
+}): JSX.Element => {
+  // console.log('Rendered(InputContainer)');
   return (
     <StyledTodoInputContainer>
       <h2>할 일을 작성해주세요.</h2>
-      <TodoInput setTodoDB={setTodoDB} />
+      <TodoInput
+        todoDB={todoDB}
+        setTodoDB={setTodoDB}
+      />
     </StyledTodoInputContainer>
   );
 };
@@ -22,6 +26,7 @@ const StyledTodoInputContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 0.1px salmon solid;
 
   h2 {
     margin-top: 1rem;
