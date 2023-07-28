@@ -42,7 +42,7 @@ const TodoInput: React.FC<todoDBStateType> = ({
         type="text"
         ref={todoInputRef}
         value={todoValue}
-        onChange={(e) => todoInputOnChange(e)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => todoInputOnChange(e)}
       />
       <button onClick={postClickHandler}>작성하기</button>
     </StyledDiv>
