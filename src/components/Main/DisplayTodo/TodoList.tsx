@@ -32,7 +32,7 @@ const TodoList: React.FC<todoDBStateType> = ({ todoDB, setTodoDB }) => {
     }
   };
   // 삭제 하기
-  useEffect(() => {
+  useEffect((): void => {
     if (!confirmToDelete || deleteModalToggler === null || todoDB === null) {
       return;
     }
