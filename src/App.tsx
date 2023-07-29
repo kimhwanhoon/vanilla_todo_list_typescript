@@ -1,14 +1,8 @@
 import './App.css';
-import Header from './components/Header/Header';
-import Main from './components/Main/Main';
+import Router from './shared/Router';
 
 function App() {
-  return (
-    <>
-      <Header />
-      <Main />
-    </>
-  );
+  return <Router />;
 }
 
 export default App;
