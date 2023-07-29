@@ -7,15 +7,16 @@ const InputContainer: React.FC<todoDBStateType> = ({
   todoDB,
   setTodoDB,
 }): JSX.Element => {
-  // console.log('Rendered(InputContainer)');
   return (
-    <StyledTodoInputContainer>
-      <h2>할 일을 작성해주세요.</h2>
-      <TodoInput
-        todoDB={todoDB}
-        setTodoDB={setTodoDB}
-      />
-    </StyledTodoInputContainer>
+    <>
+      <StyledTodoInputContainer>
+        <h2>할 일을 작성해주세요.</h2>
+        <TodoInput
+          todoDB={todoDB}
+          setTodoDB={setTodoDB}
+        />
+      </StyledTodoInputContainer>
+    </>
   );
 };
 

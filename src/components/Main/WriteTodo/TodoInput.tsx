@@ -6,7 +6,6 @@ const TodoInput: React.FC<todoDBStateType> = ({
   todoDB,
   setTodoDB,
 }): JSX.Element => {
-  // console.log('Rendered(TodoInput)');
   const [todoValue, setTodoValue] = useState<string>('');
   const todoInputRef = useRef<HTMLInputElement>(null);
   // Input => onChange
@@ -42,7 +41,7 @@ const TodoInput: React.FC<todoDBStateType> = ({
         type="text"
         ref={todoInputRef}
         value={todoValue}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => todoInputOnChange(e)}
+        onChange={(e) => todoInputOnChange(e)}
       />
       <button onClick={postClickHandler}>작성하기</button>
     </StyledDiv>

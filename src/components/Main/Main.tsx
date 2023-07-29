@@ -8,6 +8,7 @@ const Main: React.FC = (): JSX.Element => {
   // console.log('Rendered(Main)');
   const [todoDB, setTodoDB] = useState<todoDBType[] | null>(null);
   // console.log('todoDB:', todoDB);
+
   return (
     <StyledMain>
       <InputContainer
