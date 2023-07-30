@@ -6,6 +6,7 @@ import {
 } from '../../../redux/config/configStore';
 import { T_todo, updateTodo } from '../../../redux/modules/todo';
 import { addTodoDB } from '../../../axios/dbApi';
+import short from 'short-uuid';
 
 const TodoInput: React.FC<{}> = (): JSX.Element => {
   const todoInputRef = useRef<HTMLInputElement>(null);
@@ -13,7 +14,6 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const todoDB = useAppSelector((state) => state.todoList);
-  console.log(todoDB);
   // 작성하기
   const postClickHandler = (): void => {
     if (!todoVal.current || todoInputRef.current === null) {
@@ -23,11 +23,11 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
     }
     // input값과 id를 저장
     const newData: T_todo = {
-      id: Date.now(),
+      id: short.generate(),
       todo: todoVal.current,
     };
     const updatedTodoDB = [...todoDB, newData];
-    addTodoDB(updatedTodoDB);
+    addTodoDB(newData);
     dispatch(updateTodo(updatedTodoDB));
     todoVal.current = '';
     todoInputRef.current.value = '';

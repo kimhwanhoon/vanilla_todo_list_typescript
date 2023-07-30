@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 // T_*: Type of *
 export interface T_todo {
-  id: number;
+  id: string;
   todo: string;
 }
 export type T_todoState = Array<T_todo>;

@@ -1,26 +1,16 @@
 {
-  "database": {
-    "todo": [
-      {
-        "id": 0,
-        "todo": "todo 1"
-      },
-      {
-        "id": 1,
-        "todo": "todo 2"
-      },
-      {
-        "id": 1690717329640,
-        "todo": "todo 3"
-      },
-      {
-        "id": 1690717374331,
-        "todo": "4"
-      },
-      {
-        "id": 1690717516533,
-        "todo": "5"
-      }
-    ]
-  }
+  "database": [
+    {
+      "id": "fJCTSq1oHUi3CjLeBkch1j",
+      "todo": "2"
+    },
+    {
+      "id": "uFkJJBfRRkNLkbwoYVSxNJ",
+      "todo": "3"
+    },
+    {
+      "id": "3hTVwSRjKC29rwQNzk4Sd9",
+      "todo": "todo 4"
+    }
+  ]
 }

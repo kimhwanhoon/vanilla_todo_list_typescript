@@ -5,17 +5,18 @@ import {
   useAppDispatch,
   useAppSelector,
 } from '../../../redux/config/configStore';
+import { deleteTodoDB, editTodoDB } from '../../../axios/dbApi';
 
 const TodoList: React.FC<{}> = () => {
   const [confirmToDelete, setConfirmToDelete] = useState<boolean>(false);
   const [deleteModalToggler, setDeleteModalToggler] = useState<
-    [boolean, number] | null
+    [boolean, string] | null
   >(null);
-
   const storedTodoList: T_todoState = useAppSelector((state) => state.todoList);
+
   const dispatch = useAppDispatch();
   // 수정하기
-  const editClickHandler = (id: number): void => {
+  const editClickHandler = (id: string): void => {
     const newTodo: string | null | undefined =
       prompt('수정할 값을 입력해주세요.');
     if (!newTodo) {
@@ -27,12 +28,13 @@ const TodoList: React.FC<{}> = () => {
     // deepcopy of todoDB
     const copiedDB: T_todoState = structuredClone(storedTodoList);
     copiedDB[targetIndex].todo = newTodo;
+    editTodoDB({ id, todo: newTodo });
     dispatch(updateTodo(copiedDB));
   };
   //
   //
   // 삭제 모달 토글러
-  const deleteModalToggleHandler = (id: number): void => {
+  const deleteModalToggleHandler = (id: string): void => {
     if (deleteModalToggler && deleteModalToggler[0]) {
       return;
     } else {
@@ -51,6 +53,7 @@ const TodoList: React.FC<{}> = () => {
     const id = deleteModalToggler[1];
     // filteredTodoDB = 해당 todo 값만 뺀 전체 todoDB
     const filteredTodoList = storedTodoList.filter((el) => el.id !== id);
+    deleteTodoDB(id);
     dispatch(updateTodo(filteredTodoList));
     setDeleteModalToggler(null);
     setConfirmToDelete(false);

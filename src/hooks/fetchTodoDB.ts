@@ -11,7 +11,7 @@ const useFetchTodoDB = (): void => {
     const getData = async (): Promise<void> => {
       try {
         const db = await getTodoDB();
-        setTodoDB(db.data.todo);
+        setTodoDB(db.data);
       } catch (error) {
         console.log(error);
       }
