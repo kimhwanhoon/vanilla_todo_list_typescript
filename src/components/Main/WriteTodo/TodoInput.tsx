@@ -1,14 +1,19 @@
 import React, { useRef } from 'react';
 import { styled } from 'styled-components';
-import { useAppDispatch } from '../../../redux/config/configStore';
-import { T_todo, postTodo } from '../../../redux/modules/todo';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../../redux/config/configStore';
+import { T_todo, updateTodo } from '../../../redux/modules/todo';
+import { addTodoDB } from '../../../axios/dbApi';
 
 const TodoInput: React.FC<{}> = (): JSX.Element => {
-  console.log('rendered');
   const todoInputRef = useRef<HTMLInputElement>(null);
   const todoVal = useRef<string>('');
   const dispatch = useAppDispatch();
 
+  const todoDB = useAppSelector((state) => state.todoList);
+  console.log(todoDB);
   // 작성하기
   const postClickHandler = (): void => {
     if (!todoVal.current || todoInputRef.current === null) {
@@ -21,7 +26,9 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
       id: Date.now(),
       todo: todoVal.current,
     };
-    dispatch(postTodo(newData));
+    const updatedTodoDB = [...todoDB, newData];
+    addTodoDB(updatedTodoDB);
+    dispatch(updateTodo(updatedTodoDB));
     todoVal.current = '';
     todoInputRef.current.value = '';
   };

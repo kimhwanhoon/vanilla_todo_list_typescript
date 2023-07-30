@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { T_todoState, modifyTodo } from '../../../redux/modules/todo';
+import { T_todoState, updateTodo } from '../../../redux/modules/todo';
 import {
   useAppDispatch,
   useAppSelector,
@@ -27,7 +27,7 @@ const TodoList: React.FC<{}> = () => {
     // deepcopy of todoDB
     const copiedDB: T_todoState = structuredClone(storedTodoList);
     copiedDB[targetIndex].todo = newTodo;
-    dispatch(modifyTodo(copiedDB));
+    dispatch(updateTodo(copiedDB));
   };
   //
   //
@@ -51,7 +51,7 @@ const TodoList: React.FC<{}> = () => {
     const id = deleteModalToggler[1];
     // filteredTodoDB = 해당 todo 값만 뺀 전체 todoDB
     const filteredTodoList = storedTodoList.filter((el) => el.id !== id);
-    dispatch(modifyTodo(filteredTodoList));
+    dispatch(updateTodo(filteredTodoList));
     setDeleteModalToggler(null);
     setConfirmToDelete(false);
   }, [confirmToDelete]);

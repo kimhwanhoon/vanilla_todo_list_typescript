@@ -13,15 +13,15 @@ const todoSlice = createSlice({
   name: 'Todo Slice',
   initialState,
   reducers: {
-    postTodo: (state: T_todoState, action: PayloadAction<T_todo>) => {
-      return [...state, action.payload];
+    fetchTodo: (state: T_todoState, action: PayloadAction<T_todoState>) => {
+      return action.payload;
     },
-    // modify is used with "edit", "delete" todo (TodoList.tsx)
-    modifyTodo: (state: T_todoState, action: PayloadAction<T_todoState>) => {
+    // modify is used with "post", "edit", "delete" todo (TodoList.tsx)
+    updateTodo: (state: T_todoState, action: PayloadAction<T_todoState>) => {
       return action.payload;
     },
   },
 });
 
 export default todoSlice;
-export const { postTodo, modifyTodo } = todoSlice.actions;
+export const { fetchTodo, updateTodo } = todoSlice.actions;
