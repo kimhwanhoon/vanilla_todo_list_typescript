@@ -10,8 +10,8 @@ const useFetchTodoDB = (): void => {
   useEffect(() => {
     const getData = async (): Promise<void> => {
       try {
-        const db = await getTodoDB();
-        setTodoDB(db.data);
+        const db: T_todoState = (await getTodoDB()).data;
+        setTodoDB(db);
       } catch (error) {
         console.log(error);
       }
