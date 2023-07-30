@@ -1,14 +1,14 @@
+import { Provider } from 'react-redux';
 import './App.css';
-import Header from './components/Header/Header';
-import Main from './components/Main/Main';
+import Router from './shared/Router';
+import { store } from './redux/config/configStore';
 
-function App() {
+const App: React.FC = (): JSX.Element => {
   return (
-    <>
-      <Header />
-      <Main />
-    </>
+    <Provider store={store}>
+      <Router />
+    </Provider>
   );
-}
+};
 
 export default App;
