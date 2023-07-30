@@ -1,21 +1,14 @@
 import React from 'react';
 import { styled } from 'styled-components';
-import { todoDBStateType } from '../../../types';
 import TodoList from './TodoList';
 
-const DisplayTodoContainer: React.FC<todoDBStateType> = ({
-  todoDB,
-  setTodoDB,
-}) => {
+const DisplayTodoContainer: React.FC<{}> = () => {
   return (
     <StyledDiv>
       <StyledTitleDiv>
         <h3>할 일 목록</h3>
       </StyledTitleDiv>
-      <TodoList
-        todoDB={todoDB}
-        setTodoDB={setTodoDB}
-      />
+      <TodoList />
     </StyledDiv>
   );
 };

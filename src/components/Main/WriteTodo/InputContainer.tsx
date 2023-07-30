@@ -1,20 +1,13 @@
 import React from 'react';
 import { styled } from 'styled-components';
 import TodoInput from './TodoInput';
-import { todoDBStateType } from '../../../types';
 
-const InputContainer: React.FC<todoDBStateType> = ({
-  todoDB,
-  setTodoDB,
-}): JSX.Element => {
+const InputContainer: React.FC<{}> = (): JSX.Element => {
   return (
     <>
       <StyledTodoInputContainer>
         <h2>할 일을 작성해주세요.</h2>
-        <TodoInput
-          todoDB={todoDB}
-          setTodoDB={setTodoDB}
-        />
+        <TodoInput />
       </StyledTodoInputContainer>
     </>
   );

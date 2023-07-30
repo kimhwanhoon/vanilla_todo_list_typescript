@@ -1,13 +1,14 @@
 import React, { ChangeEvent, useRef, useState } from 'react';
 import { styled } from 'styled-components';
-import { todoDBStateType, todoDBType } from '../../../types';
+import { useAppDispatch } from '../../../redux/config/configStore';
+import { T_todo, postTodo } from '../../../redux/modules/todo';
 
-const TodoInput: React.FC<todoDBStateType> = ({
-  todoDB,
-  setTodoDB,
-}): JSX.Element => {
+const TodoInput: React.FC<{}> = (): JSX.Element => {
   const [todoValue, setTodoValue] = useState<string>('');
   const todoInputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useAppDispatch();
+  //
   // Input => onChange
   const todoInputOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTodoValue(e.target.value);
@@ -22,17 +23,11 @@ const TodoInput: React.FC<todoDBStateType> = ({
     }
     setTodoValue('');
     // input값과 id를 저장
-    const newData: todoDBType = {
+    const newData: T_todo = {
       id: Date.now(),
       todo: todoValue,
     };
-    // 'todoDB'의 초기값은 null이다.
-    if (todoDB === null) {
-      setTodoDB([newData]);
-      return;
-    }
-    // 'todoDB'의 초기값이 null이 아니면, 기존의 todoDB에 데이터 추가하기
-    setTodoDB([...todoDB, newData]);
+    dispatch(postTodo(newData));
   };
 
   return (

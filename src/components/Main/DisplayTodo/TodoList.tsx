@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { todoDBStateType, todoDBType } from '../../../types';
+import { T_todoState, modifyTodo } from '../../../redux/modules/todo';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../../redux/config/configStore';
 
-const TodoList: React.FC<todoDBStateType> = ({ todoDB, setTodoDB }) => {
+const TodoList: React.FC<{}> = () => {
   const [confirmToDelete, setConfirmToDelete] = useState<boolean>(false);
   const [deleteModalToggler, setDeleteModalToggler] = useState<
     [boolean, number] | null
   >(null);
 
+  const storedTodoList: T_todoState = useAppSelector((state) => state.todoList);
+  const dispatch = useAppDispatch();
   // 수정하기
   const editClickHandler = (id: number): void => {
     const newTodo: string | null | undefined =
       prompt('수정할 값을 입력해주세요.');
-    if (!newTodo || todoDB === null) {
+    if (!newTodo) {
       return;
     }
-    const targetIndex: number = todoDB.findIndex((todo) => todo.id === id);
+    const targetIndex: number = storedTodoList.findIndex(
+      (todo) => todo.id === id
+    );
     // deepcopy of todoDB
-    const copiedDB: todoDBType[] = structuredClone(todoDB);
+    const copiedDB: T_todoState = structuredClone(storedTodoList);
     copiedDB[targetIndex].todo = newTodo;
-    setTodoDB(copiedDB);
+    dispatch(modifyTodo(copiedDB));
   };
   //
   //
@@ -33,15 +41,17 @@ const TodoList: React.FC<todoDBStateType> = ({ todoDB, setTodoDB }) => {
   };
   // 삭제 하기
   useEffect((): void => {
-    if (!confirmToDelete || deleteModalToggler === null || todoDB === null) {
+    if (
+      !confirmToDelete ||
+      deleteModalToggler === null ||
+      storedTodoList === null
+    ) {
       return;
     }
     const id = deleteModalToggler[1];
     // filteredTodoDB = 해당 todo 값만 뺀 전체 todoDB
-    const filteredTodoDB: todoDBType[] = todoDB.filter(
-      (todo) => todo.id !== id
-    );
-    setTodoDB(filteredTodoDB);
+    const filteredTodoList = storedTodoList.filter((el) => el.id !== id);
+    dispatch(modifyTodo(filteredTodoList));
     setDeleteModalToggler(null);
     setConfirmToDelete(false);
   }, [confirmToDelete]);
@@ -62,7 +72,7 @@ const TodoList: React.FC<todoDBStateType> = ({ todoDB, setTodoDB }) => {
     <>
       {deleteModalToggler && <ConfirmToDeleteModal />}
       <TodoListContainerS>
-        {todoDB?.map((todo: todoDBType): JSX.Element => {
+        {storedTodoList.map((todo): JSX.Element => {
           return (
             <TodoContainerS key={todo.id}>
               <TodoContentS>{todo.todo}</TodoContentS>
