@@ -1,19 +1,26 @@
 import React, { useRef } from 'react';
 import { styled } from 'styled-components';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '../../../redux/config/configStore';
-import { T_todo, updateTodo } from '../../../redux/modules/todo';
+import { T_todo } from '../../../redux/modules/todo';
 import { addTodoDB } from '../../../axios/dbApi';
 import short from 'short-uuid';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const TodoInput: React.FC<{}> = (): JSX.Element => {
   const todoInputRef = useRef<HTMLInputElement>(null);
   const todoVal = useRef<string>('');
-  const dispatch = useAppDispatch();
 
-  const todoDB = useAppSelector((state) => state.todoList.data);
+  //
+  const queryClient = useQueryClient();
+  // 새로운 todo 추가 함수
+  const mutation = useMutation({
+    mutationFn: addTodoDB,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['todoList'],
+      });
+    },
+  });
+
   // 작성하기
   const postClickHandler = (): void => {
     if (!todoVal.current || todoInputRef.current === null) {
@@ -26,9 +33,7 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
       id: short.generate(),
       todo: todoVal.current,
     };
-    const updatedTodoDB = [...todoDB, newData];
-    addTodoDB(newData);
-    dispatch(updateTodo(updatedTodoDB));
+    mutation.mutate(newData);
     todoVal.current = '';
     todoInputRef.current.value = '';
   };

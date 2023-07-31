@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { T_todoList, updateTodo } from '../../../redux/modules/todo';
+import { T_todoList } from '../../../redux/modules/todo';
 import { deleteTodoDB, editTodoDB, getTodoDB } from '../../../axios/dbApi';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const TodoList: React.FC<{}> = () => {
   const { data } = useQuery({ queryKey: ['todoList'], queryFn: getTodoDB });
@@ -12,7 +12,15 @@ const TodoList: React.FC<{}> = () => {
   const [deleteModalToggler, setDeleteModalToggler] = useState<
     [boolean, string] | null
   >(null);
-
+  // queryClient 인스턴스 초기화
+  const queryClient = useQueryClient();
+  // 수정하기 query 로직
+  const editQuery = useMutation({
+    mutationFn: editTodoDB,
+    onSuccess: async (): Promise<void> => {
+      await queryClient.invalidateQueries({ queryKey: ['todoList'] });
+    },
+  });
   // 수정하기
   const editClickHandler = (id: string): void => {
     const newTodo: string | null | undefined =
@@ -26,7 +34,8 @@ const TodoList: React.FC<{}> = () => {
     // deepcopy of todoDB
     const copiedDB: T_todoList = structuredClone(fetchedTodoList);
     copiedDB[targetIndex].todo = newTodo;
-    editTodoDB({ id, todo: newTodo });
+    // editTodoDB({ id, todo: newTodo });
+    editQuery.mutate({ id, todo: newTodo });
   };
   //
   //
@@ -38,6 +47,14 @@ const TodoList: React.FC<{}> = () => {
       setDeleteModalToggler([true, id]);
     }
   };
+
+  // 삭제하기 query 로직
+  const deleteQuery = useMutation({
+    mutationFn: deleteTodoDB,
+    onSuccess: async (): Promise<void> => {
+      await queryClient.invalidateQueries({ queryKey: ['todoList'] });
+    },
+  });
   // 삭제 하기
   useEffect((): void => {
     if (
@@ -48,13 +65,10 @@ const TodoList: React.FC<{}> = () => {
       return;
     }
     const id = deleteModalToggler[1];
-    // filteredTodoDB = 해당 todo 값만 뺀 전체 todoDB
-    const filteredTodoList = fetchedTodoList.filter((el) => el.id !== id);
-    deleteTodoDB(id);
-
+    deleteQuery.mutate(id);
     setDeleteModalToggler(null);
     setConfirmToDelete(false);
-  }, [confirmToDelete]);
+  }, [confirmToDelete, deleteModalToggler, deleteQuery, fetchedTodoList]);
 
   // 삭제 확인 모달
   const ConfirmToDeleteModal = () => {

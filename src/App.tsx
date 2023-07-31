@@ -16,6 +16,7 @@ const App: React.FC = (): JSX.Element => {
       },
     },
   });
+
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>

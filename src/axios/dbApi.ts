@@ -13,7 +13,7 @@ export const getTodoDB = async (): Promise<any> => {
 // 데이터 추가하기
 export const addTodoDB = async (newData: T_todo): Promise<void> => {
   try {
-    await requestDB.post('/database', newData);
+    return await requestDB.post('/database', newData);
   } catch (error) {
     console.log(error);
   }
