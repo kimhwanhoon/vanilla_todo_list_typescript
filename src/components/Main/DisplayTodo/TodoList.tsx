@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { T_todoList, updateTodo } from '../../../redux/modules/todo';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '../../../redux/config/configStore';
-import { deleteTodoDB, editTodoDB } from '../../../axios/dbApi';
+import { deleteTodoDB, editTodoDB, getTodoDB } from '../../../axios/dbApi';
+import { useQuery } from '@tanstack/react-query';
 
 const TodoList: React.FC<{}> = () => {
+  const { data } = useQuery({ queryKey: ['todoList'], queryFn: getTodoDB });
+  const fetchedTodoList: T_todoList = data?.data;
+
   const [confirmToDelete, setConfirmToDelete] = useState<boolean>(false);
   const [deleteModalToggler, setDeleteModalToggler] = useState<
     [boolean, string] | null
   >(null);
-  const storedTodoList: T_todoList = useAppSelector(
-    (state) => state.todoList.data
-  );
 
-  const dispatch = useAppDispatch();
   // 수정하기
   const editClickHandler = (id: string): void => {
     const newTodo: string | null | undefined =
@@ -24,14 +20,13 @@ const TodoList: React.FC<{}> = () => {
     if (!newTodo) {
       return;
     }
-    const targetIndex: number = storedTodoList.findIndex(
+    const targetIndex: number = fetchedTodoList.findIndex(
       (todo) => todo.id === id
     );
     // deepcopy of todoDB
-    const copiedDB: T_todoList = structuredClone(storedTodoList);
+    const copiedDB: T_todoList = structuredClone(fetchedTodoList);
     copiedDB[targetIndex].todo = newTodo;
     editTodoDB({ id, todo: newTodo });
-    dispatch(updateTodo(copiedDB));
   };
   //
   //
@@ -48,15 +43,15 @@ const TodoList: React.FC<{}> = () => {
     if (
       !confirmToDelete ||
       deleteModalToggler === null ||
-      storedTodoList === null
+      fetchedTodoList === null
     ) {
       return;
     }
     const id = deleteModalToggler[1];
     // filteredTodoDB = 해당 todo 값만 뺀 전체 todoDB
-    const filteredTodoList = storedTodoList.filter((el) => el.id !== id);
+    const filteredTodoList = fetchedTodoList.filter((el) => el.id !== id);
     deleteTodoDB(id);
-    dispatch(updateTodo(filteredTodoList));
+
     setDeleteModalToggler(null);
     setConfirmToDelete(false);
   }, [confirmToDelete]);
@@ -77,7 +72,7 @@ const TodoList: React.FC<{}> = () => {
     <>
       {deleteModalToggler && <ConfirmToDeleteModal />}
       <TodoListContainerS>
-        {storedTodoList.map((todo): JSX.Element => {
+        {fetchedTodoList?.map((todo): JSX.Element => {
           return (
             <TodoContainerS key={todo.id}>
               <TodoContentS>{todo.todo}</TodoContentS>

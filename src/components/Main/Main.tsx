@@ -2,12 +2,12 @@ import React from 'react';
 import InputContainer from './WriteTodo/InputContainer';
 import { styled } from 'styled-components';
 import DisplayTodoContainer from './DisplayTodo/DisplayTodoContainer';
-import { useAppDispatch } from '../../redux/config/configStore';
-import { __fetchTodoDB } from '../../redux/modules/todo';
+import { useQuery } from '@tanstack/react-query';
+import { getTodoDB } from '../../axios/dbApi';
 
 const Main: React.FC = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  dispatch(__fetchTodoDB());
+  useQuery({ queryKey: ['todoList'], queryFn: getTodoDB });
+  // console.log('query', query);
   return (
     <>
       <StyledMain>
