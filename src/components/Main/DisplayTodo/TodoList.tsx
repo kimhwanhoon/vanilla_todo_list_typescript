@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import { T_todoState, updateTodo } from '../../../redux/modules/todo';
+import { T_todoList, updateTodo } from '../../../redux/modules/todo';
 import {
   useAppDispatch,
   useAppSelector,
@@ -12,7 +12,9 @@ const TodoList: React.FC<{}> = () => {
   const [deleteModalToggler, setDeleteModalToggler] = useState<
     [boolean, string] | null
   >(null);
-  const storedTodoList: T_todoState = useAppSelector((state) => state.todoList);
+  const storedTodoList: T_todoList = useAppSelector(
+    (state) => state.todoList.data
+  );
 
   const dispatch = useAppDispatch();
   // 수정하기
@@ -26,7 +28,7 @@ const TodoList: React.FC<{}> = () => {
       (todo) => todo.id === id
     );
     // deepcopy of todoDB
-    const copiedDB: T_todoState = structuredClone(storedTodoList);
+    const copiedDB: T_todoList = structuredClone(storedTodoList);
     copiedDB[targetIndex].todo = newTodo;
     editTodoDB({ id, todo: newTodo });
     dispatch(updateTodo(copiedDB));

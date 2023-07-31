@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { T_todo, T_todoState } from '../redux/modules/todo';
+import { T_todo } from '../redux/modules/todo';
 
 const requestDB = axios.create({
   baseURL: 'http://localhost:4000',

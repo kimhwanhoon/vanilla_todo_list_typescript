@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { T_todoState, fetchTodo } from '../redux/modules/todo';
+import { T_todoList, fetchTodo } from '../redux/modules/todo';
 import { useAppDispatch } from '../redux/config/configStore';
 import { getTodoDB } from '../axios/dbApi';
 
 const useFetchTodoDB = (): void => {
-  const [todoDB, setTodoDB] = useState<T_todoState>([]);
+  const [todoDB, setTodoDB] = useState<T_todoList>([]);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
       try {
-        const db: T_todoState = (await getTodoDB()).data;
+        const db: T_todoList = (await getTodoDB()).data;
         setTodoDB(db);
       } catch (error) {
         console.log(error);

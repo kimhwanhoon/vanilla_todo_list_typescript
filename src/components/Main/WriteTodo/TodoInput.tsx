@@ -13,7 +13,7 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
   const todoVal = useRef<string>('');
   const dispatch = useAppDispatch();
 
-  const todoDB = useAppSelector((state) => state.todoList);
+  const todoDB = useAppSelector((state) => state.todoList.data);
   // 작성하기
   const postClickHandler = (): void => {
     if (!todoVal.current || todoInputRef.current === null) {
