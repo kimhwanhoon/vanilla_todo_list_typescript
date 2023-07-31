@@ -21,7 +21,7 @@ export const __fetchTodoDB = createAsyncThunk(
   'fetchTodoList',
   async (payload, thunkAPI) => {
     try {
-      const res = (await getTodoDB()).data;
+      const res = (await getTodoDB(1)).data;
       return thunkAPI.fulfillWithValue(res);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

@@ -12,7 +12,7 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
   //
   const queryClient = useQueryClient();
   // 새로운 todo 추가 함수
-  const mutation = useMutation({
+  const addQuery = useMutation({
     mutationFn: addTodoDB,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -33,7 +33,7 @@ const TodoInput: React.FC<{}> = (): JSX.Element => {
       id: short.generate(),
       todo: todoVal.current,
     };
-    mutation.mutate(newData);
+    addQuery.mutate(newData);
     todoVal.current = '';
     todoInputRef.current.value = '';
   };
