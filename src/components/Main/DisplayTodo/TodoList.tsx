@@ -1,36 +1,27 @@
-import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { T_todoList } from '../../../redux/modules/todo';
-import {
-  deleteTodoDB,
-  editTodoDB,
-  getNextPageTodoDB,
-  getTodoDB,
-} from '../../../axios/dbApi';
+import { deleteTodoDB, editTodoDB, getTodoDB } from '../../../axios/dbApi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const TodoList: React.FC<{}> = () => {
   // queryClient 인스턴스 초기화
   const queryClient = useQueryClient();
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [nextPageNumber, setNextPageNumber] = useState<number>(1);
-  useEffect(() => {
-    setNextPageNumber(pageNumber + 1);
-  }, [pageNumber]);
+
   const { data } = useQuery({
     queryKey: ['todoList', pageNumber],
     queryFn: () => getTodoDB(pageNumber),
     keepPreviousData: true,
   });
   //
-  // todo: dbApi.ts에 getTodoDBNextPage를 따로 만들어서 써보자...
+  // nextPageData받는 로직
   const testData = useQuery({
-    queryKey: ['todoList', nextPageNumber],
-    queryFn: () => getNextPageTodoDB(nextPageNumber),
+    queryKey: ['todoList', pageNumber + 1],
+    queryFn: () => getTodoDB(pageNumber + 1),
     keepPreviousData: true,
   });
-  const nextPageData = testData?.data?.data;
-  // todo: getNextPageTodoDB
+  const nextPageData: Array<T_todoList> = testData?.data?.data;
   //
   const fetchedTodoList: T_todoList = data?.data;
 
@@ -135,7 +126,7 @@ const TodoList: React.FC<{}> = () => {
           </button>
           <button
             onClick={() => setPageNumber(pageNumber + 1)}
-            disabled={(nextPageData as Array<void>)?.length === 0}
+            disabled={!nextPageData?.length}
           >
             Next page
           </button>
