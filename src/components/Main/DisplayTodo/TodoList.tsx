@@ -1,37 +1,21 @@
-import React, { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { T_todoList } from '../../../redux/modules/todo';
-import {
-  deleteTodoDB,
-  editTodoDB,
-  getNextPageTodoDB,
-  getTodoDB,
-} from '../../../axios/dbApi';
+import { deleteTodoDB, editTodoDB, getTodoDB } from '../../../axios/dbApi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const TodoList: React.FC<{}> = () => {
   // queryClient 인스턴스 초기화
   const queryClient = useQueryClient();
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [nextPageNumber, setNextPageNumber] = useState<number>(1);
-  useEffect(() => {
-    setNextPageNumber(pageNumber + 1);
-  }, [pageNumber]);
+  const [limit, setLimit] = useState<number>(5);
+
   const { data } = useQuery({
-    queryKey: ['todoList', pageNumber],
-    queryFn: () => getTodoDB(pageNumber),
+    queryKey: ['todoList', limit],
+    queryFn: () => getTodoDB(limit),
     keepPreviousData: true,
   });
-  //
-  // todo: dbApi.ts에 getTodoDBNextPage를 따로 만들어서 써보자...
-  const testData = useQuery({
-    queryKey: ['todoList', nextPageNumber],
-    queryFn: () => getNextPageTodoDB(nextPageNumber),
-    keepPreviousData: true,
-  });
-  const nextPageData = testData?.data?.data;
-  // todo: getNextPageTodoDB
-  //
+
   const fetchedTodoList: T_todoList = data?.data;
 
   const [confirmToDelete, setConfirmToDelete] = useState<boolean>(false);
@@ -108,38 +92,39 @@ const TodoList: React.FC<{}> = () => {
       </DeleteModal>
     );
   };
+  //
 
   return (
     <>
       {deleteModalToggler && <ConfirmToDeleteModal />}
-      <TodoListContainerS>
-        {fetchedTodoList?.map((todo): JSX.Element => {
-          return (
-            <TodoContainerS key={todo.id}>
-              <TodoContentS>{todo.todo}</TodoContentS>
-              <ButtonContainerS>
-                <button onClick={() => editClickHandler(todo.id)}>수정</button>
-                <button onClick={() => deleteModalToggleHandler(todo.id)}>
-                  삭제
-                </button>
-              </ButtonContainerS>
-            </TodoContainerS>
-          );
-        })}
-        <PaginationButtons>
-          <button
-            onClick={() => setPageNumber(pageNumber - 1)}
-            disabled={pageNumber === 1}
-          >
-            Previous page
-          </button>
-          <button
-            onClick={() => setPageNumber(pageNumber + 1)}
-            disabled={(nextPageData as Array<void>)?.length === 0}
-          >
-            Next page
-          </button>
-        </PaginationButtons>
+      <TodoListContainerS id="12345">
+        <InfiniteScroll
+          dataLength={
+            fetchedTodoList && fetchedTodoList.length > 0
+              ? fetchedTodoList.length
+              : 0
+          }
+          next={() => setLimit(limit + 5)}
+          hasMore={true}
+          loader={<p>Loading</p>}
+          scrollableTarget={'12345'}
+        >
+          {fetchedTodoList?.map((todo): JSX.Element => {
+            return (
+              <TodoContainerS key={todo.id}>
+                <TodoContentS>{todo.todo}</TodoContentS>
+                <ButtonContainerS>
+                  <button onClick={() => editClickHandler(todo.id)}>
+                    수정
+                  </button>
+                  <button onClick={() => deleteModalToggleHandler(todo.id)}>
+                    삭제
+                  </button>
+                </ButtonContainerS>
+              </TodoContainerS>
+            );
+          })}
+        </InfiniteScroll>
       </TodoListContainerS>
     </>
   );
@@ -154,6 +139,8 @@ const TodoListContainerS = styled.div`
   align-items: center;
   gap: 0.5rem;
   padding: 1rem;
+  height: 400px;
+  overflow: scroll;
 `;
 
 const TodoContainerS = styled.div`
@@ -161,11 +148,10 @@ const TodoContainerS = styled.div`
   align-items: center;
   justify-content: space-between;
   box-shadow: 1px 1px 3px salmon;
-  width: 50%;
-  gap: 1rem;
-  height: 2rem;
+  width: 300px;
+  margin-bottom: 1rem;
+  min-height: 5rem;
   border-radius: 5px;
-  overflow: hidden;
 `;
 
 const TodoContentS = styled.p`
@@ -205,27 +191,6 @@ const DeleteModal = styled.div`
       width: 40%;
       padding: 3px;
       cursor: pointer;
-    }
-  }
-`;
-
-const PaginationButtons = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  align-items: center;
-  button {
-    cursor: pointer;
-  }
-`;
-
-const PagesContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  p {
-    cursor: pointer;
-    &:hover {
-      text-decoration: underline;
     }
   }
 `;
