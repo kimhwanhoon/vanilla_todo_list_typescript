@@ -8,15 +8,37 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const TodoList: React.FC<{}> = () => {
   // queryClient 인스턴스 초기화
   const queryClient = useQueryClient();
-  const [limit, setLimit] = useState<number>(5);
+  const [wholeTodoData, setWholeTodoData] = useState<T_todoList>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const { data } = useQuery({
-    queryKey: ['todoList', limit],
-    queryFn: () => getTodoDB(limit),
+  const { data: currentPageData } = useQuery({
+    queryKey: ['todoList', currentPage],
+    queryFn: () => getTodoDB(currentPage),
+    keepPreviousData: true,
+  });
+  // nextPageData
+  const { data: nextPageData } = useQuery({
+    queryKey: ['todoList', currentPage + 1],
+    queryFn: () => getTodoDB(currentPage + 1),
     keepPreviousData: true,
   });
 
-  const fetchedTodoList: T_todoList = data?.data;
+  useEffect(() => {
+    if (!!nextPageData?.data.length) {
+      setHasMore(true);
+    } else {
+      setHasMore(false);
+    }
+  }, [nextPageData]);
+
+  useEffect(() => {
+    if (!!currentPageData?.data.length) {
+      setWholeTodoData((prev) => {
+        return [...prev, ...currentPageData.data];
+      });
+    }
+  }, [currentPageData]);
 
   const [confirmToDelete, setConfirmToDelete] = useState<boolean>(false);
   const [deleteModalToggler, setDeleteModalToggler] = useState<
@@ -38,11 +60,11 @@ const TodoList: React.FC<{}> = () => {
     if (!newTodo) {
       return;
     }
-    const targetIndex: number = fetchedTodoList.findIndex(
+    const targetIndex: number = wholeTodoData.findIndex(
       (todo) => todo.id === id
     );
     // deepcopy of todoDB
-    const copiedDB: T_todoList = structuredClone(fetchedTodoList);
+    const copiedDB: T_todoList = structuredClone(wholeTodoData);
     copiedDB[targetIndex].todo = newTodo;
     // editTodoDB({ id, todo: newTodo });
     editQuery.mutate({ id, todo: newTodo });
@@ -70,7 +92,7 @@ const TodoList: React.FC<{}> = () => {
     if (
       !confirmToDelete ||
       deleteModalToggler === null ||
-      fetchedTodoList === null
+      wholeTodoData === null
     ) {
       return;
     }
@@ -78,7 +100,7 @@ const TodoList: React.FC<{}> = () => {
     deleteQuery.mutate(id);
     setDeleteModalToggler(null);
     setConfirmToDelete(false);
-  }, [confirmToDelete, deleteModalToggler, deleteQuery, fetchedTodoList]);
+  }, [confirmToDelete, deleteModalToggler, deleteQuery, wholeTodoData]);
 
   // 삭제 확인 모달
   const ConfirmToDeleteModal = () => {
@@ -97,19 +119,18 @@ const TodoList: React.FC<{}> = () => {
   return (
     <>
       {deleteModalToggler && <ConfirmToDeleteModal />}
-      <TodoListContainerS id="12345">
+      <TodoListContainerS id="scroll-target">
         <InfiniteScroll
-          dataLength={
-            fetchedTodoList && fetchedTodoList.length > 0
-              ? fetchedTodoList.length
-              : 0
-          }
-          next={() => setLimit(limit + 5)}
-          hasMore={true}
+          dataLength={wholeTodoData.length}
+          next={() => setCurrentPage(currentPage + 1)}
+          hasMore={hasMore}
           loader={<p>Loading</p>}
-          scrollableTarget={'12345'}
+          scrollableTarget={'scroll-target'}
+          endMessage={
+            <p style={{ textAlign: 'center' }}>Yay! You have seen it all</p>
+          }
         >
-          {fetchedTodoList?.map((todo): JSX.Element => {
+          {wholeTodoData?.map((todo): JSX.Element => {
             return (
               <TodoContainerS key={todo.id}>
                 <TodoContentS>{todo.todo}</TodoContentS>

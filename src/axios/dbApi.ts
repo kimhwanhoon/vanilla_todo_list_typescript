@@ -6,8 +6,8 @@ const requestDB = axios.create({
 });
 
 // 데이터 가져오기
-export const getTodoDB = async (limit: number): Promise<any> => {
-  return await requestDB(`/database?_limit=${limit}&_page=1`);
+export const getTodoDB = async (page: number): Promise<any> => {
+  return await requestDB(`/database?_limit=5&_page=${page}`);
 };
 
 // 데이터 추가하기
